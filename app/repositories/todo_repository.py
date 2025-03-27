@@ -54,7 +54,7 @@ class TodoRepository:
             return None
 
         # Get update data, excluding unset fields
-        update_data = todo_update.model_dump(exclude_unset=True)
+        update_data = todo_update.model_dump(exclude_unset=True)  # model instance to dict
 
         if not update_data:
             return db_todo
