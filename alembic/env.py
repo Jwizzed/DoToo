@@ -1,48 +1,33 @@
 import os
 import sys
 from logging.config import fileConfig
-from sqlalchemy.ext.asyncio import create_async_engine # Change import
-from sqlalchemy import pool
-from alembic import context
 
-# Load .env file - ADD THIS SECTION
+from alembic import context
 from dotenv import load_dotenv
+from sqlalchemy import pool
+from sqlalchemy.ext.asyncio import create_async_engine
+
 dotenv_path = os.path.join(os.path.dirname(__file__), '..', '.env')
 load_dotenv(dotenv_path=dotenv_path)
 
-# Ensure the 'app' directory is in the Python path - ADD THIS
 sys.path.insert(0, os.path.realpath(os.path.join(os.path.dirname(__file__), '..')))
 
-# Import Base and settings - MODIFY THIS SECTION
-from app.db.base import Base # Import your Base
-# from app.core.config import settings # Or directly get DATABASE_URL if simpler
+from app.db.base import Base
 
-# this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
 
 # Interpret the config file for Python logging.
-# This line sets up loggers basically.
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# add your model's MetaData object here
-# for 'autogenerate' support
-# from myapp import mymodel
-# target_metadata = mymodel.Base.metadata
-target_metadata = Base.metadata # SET YOUR BASE METADATA HERE
+target_metadata = Base.metadata
 
-# other values from the config, defined by the needs of env.py,
-# can be acquired:
-# my_important_option = config.get_main_option("my_important_option")
-# ... etc.
-
-# Get DATABASE_URL from environment variable loaded by dotenv - ADD THIS
 DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
     raise ValueError("DATABASE_URL environment variable not set or .env file not found")
 
-# Update the sqlalchemy.url in the config object - ADD THIS
+# Update the sqlalchemy.url in the config object
 config.set_main_option('sqlalchemy.url', DATABASE_URL)
 
 
@@ -77,6 +62,7 @@ def do_run_migrations(connection):
     with context.begin_transaction():
         context.run_migrations()
 
+
 async def run_migrations_online() -> None:
     """Run migrations in 'online' mode.
 
@@ -84,20 +70,20 @@ async def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
-    connectable = create_async_engine( # Use create_async_engine
+    connectable = create_async_engine(
         config.get_main_option("sqlalchemy.url"),
         poolclass=pool.NullPool,
     )
 
-    async with connectable.connect() as connection: # Use async context manager
-        await connection.run_sync(do_run_migrations) # Run sync function within async context
+    async with connectable.connect() as connection:
+        await connection.run_sync(do_run_migrations)
 
-    await connectable.dispose() # Dispose async engine
+    await connectable.dispose()
 
 
 if context.is_offline_mode():
     run_migrations_offline()
 else:
-    # Run the async function using asyncio.run
     import asyncio
-    asyncio.run(run_migrations_online()) # Use asyncio.run
+
+    asyncio.run(run_migrations_online())
