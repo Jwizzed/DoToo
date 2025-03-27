@@ -32,7 +32,7 @@ class TodoService:
             self,
             todo_in: TodoCreate,
             current_user: User,
-            background_tasks: BackgroundTasks,  # For event handling
+            background_tasks: BackgroundTasks,
             image_file: Optional[UploadFile] = None
     ) -> Todo:
         """Creates a new todo, optionally handles file upload, and triggers background task."""
@@ -42,20 +42,17 @@ class TodoService:
             if not image_file.content_type.startswith("image/"):
                 raise FileUploadException("Uploaded file is not a valid image.")
 
-            # Generate unique filename and path
             file_extension = Path(image_file.filename).suffix
             unique_filename = f"{uuid.uuid4()}{file_extension}"
             file_path = settings.IMAGES_DIR / unique_filename
 
-            # Save the file (use async file I/O for large files in production)
             try:
                 with open(file_path, "wb") as buffer:
                     shutil.copyfileobj(image_file.file, buffer)
             except Exception as e:
-                # Basic error handling, consider more specific exceptions
                 raise FileUploadException(f"Could not save image file: {e}")
             finally:
-                await image_file.close()  # Ensure file is closed
+                await image_file.close()
 
             image_url = f"{settings.IMAGE_BASE_URL}{unique_filename}"
 
@@ -65,7 +62,6 @@ class TodoService:
             image_url=image_url
         )
 
-        # Trigger background task (Event-Driven aspect)
         background_tasks.add_task(
             send_todo_creation_notification,
             email_to=current_user.email,
