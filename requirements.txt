@@ -11,3 +11,7 @@ python-jose[cryptography] # JWT handling
 # Optional: For background tasks like email sending
 # emails
 # Jinja2
+
+# UI
+nicegui
+httpx
