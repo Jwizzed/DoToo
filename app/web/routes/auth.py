@@ -97,9 +97,9 @@ async def create_user(
         await orchestrator.handle_signup(db=db, user_in=user_in)
 
         print("Route Handler: Signup successful. Redirecting to login.")
-
-        return RedirectResponse(url=request.url_for("web_login_form") + "?message=Signup+successful.+Please+login.",
-                                status_code=status.HTTP_303_SEE_OTHER)
+        login_url = request.url_for("web_login_form")
+        redirect_url = login_url.include_query_params(message="Signup successful. Please login.")
+        return RedirectResponse(url=str(redirect_url), status_code=status.HTTP_303_SEE_OTHER)
     except HTTPException as e:
 
         print(f"Route Handler: Signup failed - {e.detail}. Rendering signup form with error.")
