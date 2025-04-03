@@ -9,6 +9,7 @@ passlib[bcrypt]
 jinja2
 python-multipart
 asyncpg
+psycopg2-binary
 alembic
 python-dotenv
 greenlet

@@ -10,3 +10,8 @@ docker run --name todo-db \
   --restart unless-stopped \
   -d postgres:15
 ```
+
+```angular2html
+alembic revision --autogenerate -m "Initial migration creating user and todo tables"
+alembic upgrade head
+```

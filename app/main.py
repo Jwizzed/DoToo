@@ -5,7 +5,6 @@ from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.core.config import settings
-from app.db.base import create_tables
 from app.web.routes import auth as web_auth_router
 from app.web.routes import todos as web_todos_router
 
@@ -13,9 +12,9 @@ from app.web.routes import todos as web_todos_router
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print("Application startup...")
-    print("Creating database tables...")
-    await create_tables()
-    print("Database tables checked/created.")
+    # print("Creating database tables...")
+    # await create_tables() # Alembic handles this
+    # print("Database tables checked/created.")
     yield
     print("Application shutdown...")
 
