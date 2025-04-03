@@ -1,1 +1,24 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
 .env
+.venv/
+venv/
+env/
+build/
+dist/
+*.egg-info/
+.DS_Store
+*.sqlite
+*.db
+*.db-journal # SQLite journal files
+
+# Static files generated/uploaded by the app
+app/static/uploads/*
+!app/static/uploads/.gitkeep # Keep the directory in git if empty
+
+# Test outputs
+htmlcov/
+.pytest_cache/
+.coverage
