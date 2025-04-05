@@ -119,7 +119,6 @@ async def read_todos_page(
             todo_dict["priority_str"] = PRIORITY_MAP.get(todo.priority, "Unknown")
             if todo.photo_filename:
                 try:
-
                     url, options = cloudinary.utils.cloudinary_url(
                         todo.photo_filename,
                         secure=True,
@@ -189,7 +188,6 @@ async def add_todo_action(
         try:
             due_date_obj = date.fromisoformat(due_date_str)
         except ValueError:
-
             redirect_url = request.url_for("web_read_todos").include_query_params(
                 error="Invalid due date format. Please use YYYY-MM-DD."
             )
@@ -205,7 +203,6 @@ async def add_todo_action(
             priority=priority,
         )
     except ValidationError as e:
-
         error_message = f"Invalid input: {e}"
         redirect_url = request.url_for("web_read_todos").include_query_params(
             error=error_message
@@ -350,7 +347,6 @@ async def edit_todo_action(
         try:
             due_date_obj = date.fromisoformat(due_date_str)
         except ValueError:
-
             edit_form_url = request.url_for("web_edit_todo_form", todo_id=todo_id)
             redirect_url = edit_form_url.include_query_params(
                 error="Invalid due date format. Please use YYYY-MM-DD."
@@ -367,7 +363,6 @@ async def edit_todo_action(
             priority=priority,
         )
     except ValidationError as e:
-
         edit_form_url = request.url_for("web_edit_todo_form", todo_id=todo_id)
         redirect_url = edit_form_url.include_query_params(error=f"Invalid input: {e}")
         return RedirectResponse(

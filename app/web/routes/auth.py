@@ -98,7 +98,6 @@ async def create_user(
 
     user_in = UserCreate(email=email, password=password)
     try:
-
         print("Route Handler: Attempting signup via orchestrator...")
         await orchestrator.handle_signup(db=db, user_in=user_in)
 
@@ -111,7 +110,6 @@ async def create_user(
             url=str(redirect_url), status_code=status.HTTP_303_SEE_OTHER
         )
     except HTTPException as e:
-
         print(
             f"Route Handler: Signup failed - {e.detail}. Rendering signup form with error."
         )
@@ -122,7 +120,6 @@ async def create_user(
             status_code=e.status_code,
         )
     except Exception as e:
-
         print(
             f"Route Handler: Unexpected signup error - {e}. Rendering signup form with error."
         )

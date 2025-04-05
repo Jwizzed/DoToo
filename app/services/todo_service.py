@@ -16,7 +16,6 @@ from app.db.models import Todo, User
 from app.schemas.todo import TodoCreate, TodoUpdate
 
 if settings.CLOUDINARY_URL:
-
     try:
         cloudinary.config(cloud_url=settings.CLOUDINARY_URL, secure=True)
         logging.info("Cloudinary configured successfully.")
@@ -29,7 +28,6 @@ else:
 
 
 class TodoService:
-
     async def get_user_todos(
         self,
         db: AsyncSession,
@@ -70,7 +68,6 @@ class TodoService:
         """Create a new todo item, optionally uploading photo to Cloudinary."""
         photo_public_id = None
         if photo and photo.filename:
-
             if not settings.CLOUDINARY_URL:
                 logging.warning("Cannot upload photo: Cloudinary is not configured.")
                 raise HTTPException(

@@ -6,7 +6,7 @@ from alembic import context
 from sqlalchemy import create_engine
 from sqlalchemy import pool
 
-project_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+project_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, project_dir)
 
 from app.core.config import settings
@@ -62,20 +62,20 @@ def run_migrations_online() -> None:
         raise ValueError("DATABASE_URL is not set in the configuration.")
 
     try:
-        if '+asyncpg' in async_db_url:
-
-            sync_db_url = async_db_url.replace('+asyncpg', '+psycopg2')
-        elif async_db_url.startswith('postgresql://'):
-
+        if "+asyncpg" in async_db_url:
+            sync_db_url = async_db_url.replace("+asyncpg", "+psycopg2")
+        elif async_db_url.startswith("postgresql://"):
             sync_db_url = async_db_url
         else:
-
             print(
-                f"Warning: Unrecognized DATABASE_URL scheme for sync conversion: {async_db_url}. Attempting direct use.")
+                f"Warning: Unrecognized DATABASE_URL scheme for sync conversion: {async_db_url}. Attempting direct use."
+            )
             sync_db_url = async_db_url
 
     except Exception as e:
-        raise ValueError(f"Error processing DATABASE_URL for synchronous connection: {e}")
+        raise ValueError(
+            f"Error processing DATABASE_URL for synchronous connection: {e}"
+        )
 
     print(f"Alembic running migrations online using SYNC URL: {sync_db_url}")
 
@@ -85,7 +85,6 @@ def run_migrations_online() -> None:
         context.configure(
             connection=connection,
             target_metadata=target_metadata,
-
         )
 
         with context.begin_transaction():
