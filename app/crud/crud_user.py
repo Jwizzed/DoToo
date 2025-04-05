@@ -20,10 +20,7 @@ async def get_user(db: AsyncSession, user_id: int) -> Optional[User]:
 
 async def create_user(db: AsyncSession, *, user_in: UserCreate) -> User:
     hashed_password = get_password_hash(user_in.password)
-    db_user = User(
-        email=user_in.email,
-        hashed_password=hashed_password
-    )
+    db_user = User(email=user_in.email, hashed_password=hashed_password)
     db.add(db_user)
     await db.flush()
     await db.refresh(db_user)

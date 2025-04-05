@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from typing import Optional
 
 from dotenv import load_dotenv
 from pydantic_settings import BaseSettings
@@ -14,14 +15,12 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     DATABASE_URL: str
     STATIC_DIR: Path = BASE_DIR / "app" / "static"
-    UPLOADS_DIR: Path = STATIC_DIR / "uploads"
+    CLOUDINARY_URL: Optional[str] = None
 
     class Config:
         case_sensitive = True
         env_file = ".env"
-        env_file_encoding = 'utf-8'
+        env_file_encoding = "utf-8"
 
 
 settings = Settings()
-
-settings.UPLOADS_DIR.mkdir(parents=True, exist_ok=True)

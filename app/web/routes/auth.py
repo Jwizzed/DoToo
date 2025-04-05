@@ -19,17 +19,19 @@ async def login_form(request: Request):
 
 @router.post("/login", name="web_login")
 async def login_for_access_token(
-        response: Response,
-        request: Request,
-        db: AsyncSession = Depends(get_db),
-        orchestrator: OrchestratorService = Depends(get_orchestrator),
-        email: str = Form(...),
-        password: str = Form(...)
+    response: Response,
+    request: Request,
+    db: AsyncSession = Depends(get_db),
+    orchestrator: OrchestratorService = Depends(get_orchestrator),
+    email: str = Form(...),
+    password: str = Form(...),
 ):
     """Handles the login form submission."""
 
     print("Route Handler: Attempting login via orchestrator...")
-    user, access_token = await orchestrator.handle_login(db=db, email=email, password=password)
+    user, access_token = await orchestrator.handle_login(
+        db=db, email=email, password=password
+    )
 
     if not user or not access_token:
         print("Route Handler: Login failed. Rendering login form with error.")
@@ -37,18 +39,20 @@ async def login_for_access_token(
         return templates.TemplateResponse(
             "login.html",
             {"request": request, "error": "Incorrect email or password"},
-            status_code=status.HTTP_401_UNAUTHORIZED
+            status_code=status.HTTP_401_UNAUTHORIZED,
         )
 
     print("Route Handler: Login successful. Setting cookie and redirecting...")
 
-    response = RedirectResponse(url=request.url_for("web_read_todos"), status_code=status.HTTP_303_SEE_OTHER)
+    response = RedirectResponse(
+        url=request.url_for("web_read_todos"), status_code=status.HTTP_303_SEE_OTHER
+    )
     response.set_cookie(
         key="access_token",
         value=f"Bearer {access_token}",
         httponly=True,
         secure=False,
-        samesite="lax"
+        samesite="lax",
     )
     return response
 
@@ -59,7 +63,9 @@ async def logout(request: Request):
 
     print("Route Handler: Logging out...")
 
-    response = RedirectResponse(url=request.url_for("web_login_form"), status_code=status.HTTP_303_SEE_OTHER)
+    response = RedirectResponse(
+        url=request.url_for("web_login_form"), status_code=status.HTTP_303_SEE_OTHER
+    )
     response.delete_cookie(key="access_token")
     print("Route Handler: Cookie cleared. Redirecting to login.")
     return response
@@ -73,12 +79,12 @@ async def signup_form(request: Request):
 
 @router.post("/signup", name="web_signup")
 async def create_user(
-        request: Request,
-        db: AsyncSession = Depends(get_db),
-        orchestrator: OrchestratorService = Depends(get_orchestrator),
-        email: str = Form(...),
-        password: str = Form(...),
-        confirm_password: str = Form(...)
+    request: Request,
+    db: AsyncSession = Depends(get_db),
+    orchestrator: OrchestratorService = Depends(get_orchestrator),
+    email: str = Form(...),
+    password: str = Form(...),
+    confirm_password: str = Form(...),
 ):
     """Handles the signup form submission."""
 
@@ -87,7 +93,7 @@ async def create_user(
         return templates.TemplateResponse(
             "signup.html",
             {"request": request, "error": "Passwords do not match"},
-            status_code=status.HTTP_400_BAD_REQUEST
+            status_code=status.HTTP_400_BAD_REQUEST,
         )
 
     user_in = UserCreate(email=email, password=password)
@@ -98,22 +104,33 @@ async def create_user(
 
         print("Route Handler: Signup successful. Redirecting to login.")
         login_url = request.url_for("web_login_form")
-        redirect_url = login_url.include_query_params(message="Signup successful. Please login.")
-        return RedirectResponse(url=str(redirect_url), status_code=status.HTTP_303_SEE_OTHER)
+        redirect_url = login_url.include_query_params(
+            message="Signup successful. Please login."
+        )
+        return RedirectResponse(
+            url=str(redirect_url), status_code=status.HTTP_303_SEE_OTHER
+        )
     except HTTPException as e:
 
-        print(f"Route Handler: Signup failed - {e.detail}. Rendering signup form with error.")
+        print(
+            f"Route Handler: Signup failed - {e.detail}. Rendering signup form with error."
+        )
 
         return templates.TemplateResponse(
             "signup.html",
             {"request": request, "error": e.detail},
-            status_code=e.status_code
+            status_code=e.status_code,
         )
     except Exception as e:
 
-        print(f"Route Handler: Unexpected signup error - {e}. Rendering signup form with error.")
+        print(
+            f"Route Handler: Unexpected signup error - {e}. Rendering signup form with error."
+        )
         return templates.TemplateResponse(
             "signup.html",
-            {"request": request, "error": "An unexpected error occurred during signup."},
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
+            {
+                "request": request,
+                "error": "An unexpected error occurred during signup.",
+            },
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )

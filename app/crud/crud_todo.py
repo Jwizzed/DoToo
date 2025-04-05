@@ -8,7 +8,9 @@ from app.db.models import Todo
 from app.schemas.todo import TodoCreate, TodoUpdate
 
 
-async def get_todos_by_owner(db: AsyncSession, owner_id: int, skip: int = 0, limit: int = 100) -> List[Todo]:
+async def get_todos_by_owner(
+    db: AsyncSession, owner_id: int, skip: int = 0, limit: int = 100
+) -> List[Todo]:
     result = await db.execute(
         select(Todo)
         .filter(Todo.owner_id == owner_id)
@@ -26,12 +28,15 @@ async def get_todo(db: AsyncSession, todo_id: int, owner_id: int) -> Optional[To
     return result.scalars().first()
 
 
-async def create_todo(db: AsyncSession, *, todo_in: TodoCreate, owner_id: int,
-                      photo_filename: Optional[str] = None) -> Todo:
+async def create_todo(
+    db: AsyncSession,
+    *,
+    todo_in: TodoCreate,
+    owner_id: int,
+    photo_filename: Optional[str] = None
+) -> Todo:
     db_todo = Todo(
-        **todo_in.model_dump(),
-        owner_id=owner_id,
-        photo_filename=photo_filename
+        **todo_in.model_dump(), owner_id=owner_id, photo_filename=photo_filename
     )
     db.add(db_todo)
     await db.flush()
@@ -56,7 +61,9 @@ async def update_todo(db: AsyncSession, *, db_todo: Todo, todo_in: TodoUpdate) -
     return db_todo
 
 
-async def delete_todo(db: AsyncSession, *, todo_id: int, owner_id: int) -> Optional[Todo]:
+async def delete_todo(
+    db: AsyncSession, *, todo_id: int, owner_id: int
+) -> Optional[Todo]:
     db_todo = await get_todo(db=db, todo_id=todo_id, owner_id=owner_id)
     if not db_todo:
         return None

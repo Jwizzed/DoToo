@@ -23,7 +23,9 @@ class AuthService:
         user = await crud_user.create_user(db=db, user_in=user_in)
         return user
 
-    async def authenticate_user(self, db: AsyncSession, email: str, password: str) -> Optional[User]:
+    async def authenticate_user(
+        self, db: AsyncSession, email: str, password: str
+    ) -> Optional[User]:
         """Handles user authentication business logic."""
 
         user = await crud_user.get_user_by_email(db, email=email)
@@ -38,7 +40,5 @@ class AuthService:
     def create_jwt_token(self, user: User) -> str:
         """Generates JWT token for the user."""
 
-        access_token = create_access_token(
-            data={"sub": user.email}
-        )
+        access_token = create_access_token(data={"sub": user.email})
         return access_token

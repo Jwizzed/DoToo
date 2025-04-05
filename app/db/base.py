@@ -10,7 +10,7 @@ AsyncSessionFactory = sessionmaker(
     class_=AsyncSession,
     expire_on_commit=False,
     autoflush=False,
-    autocommit=False
+    autocommit=False,
 )
 
 Base = declarative_base()

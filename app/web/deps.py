@@ -10,8 +10,7 @@ from app.db.models import User
 
 
 async def get_current_user_from_cookie(
-        request: Request,
-        db: AsyncSession = Depends(get_db)
+    request: Request, db: AsyncSession = Depends(get_db)
 ) -> Optional[User]:
     """
     Dependency to get the current user from the access token stored in a cookie.
@@ -36,7 +35,7 @@ async def get_current_user_from_cookie(
 
 
 async def get_current_active_user_from_cookie(
-        current_user: Optional[User] = Depends(get_current_user_from_cookie)
+    current_user: Optional[User] = Depends(get_current_user_from_cookie),
 ) -> User:
     """
     Dependency to get the current active user. Raises 401 if not authenticated.

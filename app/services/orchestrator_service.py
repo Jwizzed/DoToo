@@ -27,11 +27,15 @@ class OrchestratorService:
         print("Orchestrator: Signup handled.")
         return user
 
-    async def handle_login(self, db: AsyncSession, email: str, password: str) -> tuple[Optional[User], Optional[str]]:
+    async def handle_login(
+        self, db: AsyncSession, email: str, password: str
+    ) -> tuple[Optional[User], Optional[str]]:
         """Orchestrates the user login process."""
 
         print("Orchestrator: Handling login...")
-        user = await self.auth_service.authenticate_user(db=db, email=email, password=password)
+        user = await self.auth_service.authenticate_user(
+            db=db, email=email, password=password
+        )
         if not user:
             print("Orchestrator: Login failed - authentication.")
             return None, None
@@ -49,11 +53,11 @@ class OrchestratorService:
         return todos
 
     async def add_todo_for_user(
-            self,
-            db: AsyncSession,
-            todo_in: TodoCreate,
-            user: User,
-            photo: Optional[UploadFile] = None
+        self,
+        db: AsyncSession,
+        todo_in: TodoCreate,
+        user: User,
+        photo: Optional[UploadFile] = None,
     ) -> Todo:
         """Orchestrates adding a new todo for a user."""
         print(f"Orchestrator: Adding todo '{todo_in.title}' for user {user.email}")
@@ -70,14 +74,13 @@ class OrchestratorService:
         except Exception as e:
             print(f"Orchestrator: Unexpected error adding todo - {e}")
 
-            raise HTTPException(status_code=500, detail="An unexpected error occurred while adding the todo.")
+            raise HTTPException(
+                status_code=500,
+                detail="An unexpected error occurred while adding the todo.",
+            )
 
     async def update_todo_for_user(
-            self,
-            db: AsyncSession,
-            todo_id: int,
-            todo_in: TodoUpdate,
-            user: User
+        self, db: AsyncSession, todo_id: int, todo_in: TodoUpdate, user: User
     ) -> Todo:
         """Orchestrates updating a todo for a user."""
         print(f"Orchestrator: Updating todo ID {todo_id} for user {user.email}")
@@ -93,21 +96,31 @@ class OrchestratorService:
             raise e
         except Exception as e:
             print(f"Orchestrator: Unexpected error updating todo - {e}")
-            raise HTTPException(status_code=500, detail="An unexpected error occurred while updating the todo.")
+            raise HTTPException(
+                status_code=500,
+                detail="An unexpected error occurred while updating the todo.",
+            )
 
-    async def delete_todo_for_user(self, db: AsyncSession, todo_id: int, user: User) -> None:
+    async def delete_todo_for_user(
+        self, db: AsyncSession, todo_id: int, user: User
+    ) -> None:
         """Orchestrates deleting a todo for a user."""
         print(f"Orchestrator: Deleting todo ID {todo_id} for user {user.email}")
 
         try:
-            await self.todo_service.delete_existing_todo(db=db, todo_id=todo_id, user=user)
+            await self.todo_service.delete_existing_todo(
+                db=db, todo_id=todo_id, user=user
+            )
             print(f"Orchestrator: Todo ID {todo_id} deleted successfully.")
         except HTTPException as e:
             print(f"Orchestrator: Error deleting todo - {e.detail}")
             raise e
         except Exception as e:
             print(f"Orchestrator: Unexpected error deleting todo - {e}")
-            raise HTTPException(status_code=500, detail="An unexpected error occurred while deleting the todo.")
+            raise HTTPException(
+                status_code=500,
+                detail="An unexpected error occurred while deleting the todo.",
+            )
 
 
 def get_orchestrator() -> OrchestratorService:
