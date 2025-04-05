@@ -35,5 +35,7 @@ jobs:
           cat .env
 
       - name: Run tests with pytest
+        env:
+          PYTHONPATH: ${{ github.workspace }}
         run: |
-          pytest -v 
+          python -m pytest -v
