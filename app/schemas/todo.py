@@ -1,7 +1,10 @@
-from datetime import datetime
+from datetime import datetime, date
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+
+PRIORITY_MAP = {1: "High", 2: "Medium", 3: "Low"}
+VALID_PRIORITIES = list(PRIORITY_MAP.keys())
 
 
 class TodoBase(BaseModel):
@@ -10,6 +13,8 @@ class TodoBase(BaseModel):
     title: str
     description: Optional[str] = None
     status: str = "Not Started"
+    due_date: Optional[date] = None
+    priority: int = Field(default=2, ge=min(VALID_PRIORITIES), le=max(VALID_PRIORITIES))
 
 
 class TodoCreate(TodoBase):
@@ -24,6 +29,10 @@ class TodoUpdate(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
     status: Optional[str] = None
+    due_date: Optional[date] = None
+    priority: Optional[int] = Field(
+        default=None, ge=min(VALID_PRIORITIES), le=max(VALID_PRIORITIES)
+    )
 
 
 class TodoInDBBase(TodoBase):
@@ -35,6 +44,9 @@ class TodoInDBBase(TodoBase):
     updated_at: datetime
     photo_filename: Optional[str] = None
 
+    due_date: Optional[date]
+    priority: int
+
     class Config:
         from_attributes = True
 
@@ -42,4 +54,6 @@ class TodoInDBBase(TodoBase):
 class Todo(TodoInDBBase):
     """Properties to return to client"""
 
-    pass
+    @property
+    def priority_str(self) -> str:
+        return PRIORITY_MAP.get(self.priority, "Unknown")

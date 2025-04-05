@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Todo - {{ todo.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h1>Edit Todo</h1>
+
+            {# Display any errors passed via query params #}
+            {% if request.query_params.get('error') %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ request.query_params.get('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endif %}
+
+             {# Display existing photo if available using the passed photo_url #}
+             {% if photo_url %} {# photo_url is now passed from the route #}
+             <div class="mb-3">
+                 <label class="form-label">Current Photo:</label><br>
+                 <img src="{{ photo_url }}" alt="Current photo for {{ todo.title }}" class="img-thumbnail todo-photo">
+             </div>
+             {% elif todo.photo_filename %}
+             <div class="mb-3">
+                  <label class="form-label">Current Photo:</label><br>
+                  <span class="text-muted">(Could not generate preview URL)</span>
+                  {# Optionally show the filename if URL fails #}
+                  {# <p><small>Filename: {{ todo.photo_filename }}</small></p> #}
+             </div>
+             {% endif %}
+             {# END Display existing photo #}
+
+
+            <div class="card">
+                <div class="card-body">
+                    <form action="{{ url_for('web_edit_todo_action', todo_id=todo.id) }}" method="post">
+                        {# ... Form fields (title, description, due_date, priority) ... #}
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="title" name="title" value="{{ todo.title }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description (Optional)</label>
+                            <textarea class="form-control" id="description" name="description" rows="3">{{ todo.description or '' }}</textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="due_date" class="form-label">Due Date (Optional)</label>
+                                <input type="date" class="form-control" id="due_date" name="due_date" value="{{ todo.due_date.isoformat() if todo.due_date else '' }}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="priority" class="form-label">Priority</label>
+                                <select class="form-select" id="priority" name="priority" required>
+                                    {% for value, display in priority_options.items() %}
+                                    <option value="{{ value }}" {% if todo.priority == value %}selected{% endif %}>{{ display }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        {# ------------------------------------------------------- #}
+
+                        <button type="submit" class="btn btn-success">Save Changes</button>
+                        <a href="{{ url_for('web_read_todos') }}" class="btn btn-secondary">Cancel</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

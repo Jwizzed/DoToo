@@ -1,7 +1,7 @@
 from typing import Optional
-from datetime import datetime
+from datetime import datetime, date
 
-from sqlalchemy import Integer, String, Boolean, ForeignKey, DateTime
+from sqlalchemy import Integer, String, Boolean, ForeignKey, DateTime, Date
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 from sqlalchemy.sql import func
 
@@ -42,5 +42,10 @@ class Todo(Base):
         Integer, ForeignKey("users.id"), nullable=False
     )
     photo_filename: Mapped[Optional[str]] = mapped_column(String, nullable=True)
+
+    due_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True, index=True)
+    priority: Mapped[int] = mapped_column(
+        Integer, default=2, nullable=True, index=True
+    )  # 1: High, 2: Medium, 3: Low
 
     owner: Mapped["User"] = relationship("User", back_populates="todos")

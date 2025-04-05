@@ -31,7 +31,6 @@ class OrchestratorService:
         self, db: AsyncSession, email: str, password: str
     ) -> tuple[Optional[User], Optional[str]]:
         """Orchestrates the user login process."""
-
         print("Orchestrator: Handling login...")
         user = await self.auth_service.authenticate_user(
             db=db, email=email, password=password
@@ -39,18 +38,45 @@ class OrchestratorService:
         if not user:
             print("Orchestrator: Login failed - authentication.")
             return None, None
-
         token = self.auth_service.create_jwt_token(user)
         print("Orchestrator: Login successful, token generated.")
         return user, token
 
-    async def get_todos_for_user(self, db: AsyncSession, user: User) -> List[Todo]:
-        """Orchestrates fetching todos for a specific user."""
-        print(f"Orchestrator: Getting todos for user {user.email}")
-
-        todos = await self.todo_service.get_user_todos(db=db, user=user)
+    async def get_todos_for_user(
+        self,
+        db: AsyncSession,
+        user: User,
+        filter_status: Optional[str] = None,
+        filter_priority: Optional[int] = None,
+        sort_by: str = "created_at",
+        search_term: Optional[str] = None,
+    ) -> List[Todo]:
+        """Orchestrates fetching todos for a specific user with filtering/sorting."""
+        print(
+            f"Orchestrator: Getting todos for user {user.email} (Filters: status={filter_status}, priority={filter_priority}, Sort: {sort_by}, Search: '{search_term}')"
+        )
+        todos = await self.todo_service.get_user_todos(
+            db=db,
+            user=user,
+            filter_status=filter_status,
+            filter_priority=filter_priority,
+            sort_by=sort_by,
+            search_term=search_term,
+        )
         print(f"Orchestrator: Found {len(todos)} todos.")
         return todos
+
+    async def get_single_todo_for_user(
+        self, db: AsyncSession, todo_id: int, user: User
+    ) -> Todo:
+        """Orchestrates fetching a single todo, ensuring ownership."""
+
+        print(f"Orchestrator: Getting todo ID {todo_id} for user {user.email}")
+        todo = await self.todo_service.get_todo_for_user(
+            db=db, todo_id=todo_id, user=user
+        )
+        print(f"Orchestrator: Found todo ID {todo_id}.")
+        return todo
 
     async def add_todo_for_user(
         self,
@@ -60,8 +86,8 @@ class OrchestratorService:
         photo: Optional[UploadFile] = None,
     ) -> Todo:
         """Orchestrates adding a new todo for a user."""
-        print(f"Orchestrator: Adding todo '{todo_in.title}' for user {user.email}")
 
+        print(f"Orchestrator: Adding todo '{todo_in.title}' for user {user.email}")
         try:
             todo = await self.todo_service.create_new_todo(
                 db=db, todo_in=todo_in, user=user, photo=photo
@@ -83,8 +109,8 @@ class OrchestratorService:
         self, db: AsyncSession, todo_id: int, todo_in: TodoUpdate, user: User
     ) -> Todo:
         """Orchestrates updating a todo for a user."""
-        print(f"Orchestrator: Updating todo ID {todo_id} for user {user.email}")
 
+        print(f"Orchestrator: Updating todo ID {todo_id} for user {user.email}")
         try:
             updated_todo = await self.todo_service.update_existing_todo(
                 db=db, todo_id=todo_id, todo_in=todo_in, user=user
@@ -96,6 +122,7 @@ class OrchestratorService:
             raise e
         except Exception as e:
             print(f"Orchestrator: Unexpected error updating todo - {e}")
+
             raise HTTPException(
                 status_code=500,
                 detail="An unexpected error occurred while updating the todo.",
@@ -106,7 +133,6 @@ class OrchestratorService:
     ) -> None:
         """Orchestrates deleting a todo for a user."""
         print(f"Orchestrator: Deleting todo ID {todo_id} for user {user.email}")
-
         try:
             await self.todo_service.delete_existing_todo(
                 db=db, todo_id=todo_id, user=user
@@ -117,6 +143,7 @@ class OrchestratorService:
             raise e
         except Exception as e:
             print(f"Orchestrator: Unexpected error deleting todo - {e}")
+
             raise HTTPException(
                 status_code=500,
                 detail="An unexpected error occurred while deleting the todo.",
