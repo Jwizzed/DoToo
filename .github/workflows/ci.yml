@@ -30,7 +30,8 @@ jobs:
           echo "SECRET_KEY=ci-dummy-test-secret-key-needs-to-be-long-enough" >> .env
           echo "ALGORITHM=HS256" >> .env
           echo "ACCESS_TOKEN_EXPIRE_MINUTES=5" >> .env
-          echo "DATABASE_URL=postgresql+psycopg2://test:test@localhost:5432/testdb" >> .env
+          echo "DATABASE_URL=postgresql+asyncpg://test:test@localhost:5432/testdb" >> .env
+          echo "CLOUDINARY_URL=cloudinary://dummy:dummy@dummy" >> .env
           echo "Created dummy .env file:"
           cat .env
 
