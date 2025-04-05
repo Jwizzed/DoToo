@@ -14,3 +14,6 @@ alembic
 python-dotenv
 greenlet
 cloudinary
+pytest
+asyncpg
+httpx
