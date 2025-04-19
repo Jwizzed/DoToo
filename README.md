@@ -174,6 +174,7 @@ DoToo/
 ## Code Explanation / Architecture
 
 This project utilizes several architectural patterns to ensure maintainability, testability, and separation of concerns:
+![UML](ui_previews/uml_diagram.jpg)
 
 1.  **Layered Architecture:**
     * **Presentation Layer (`app/web`):** Handles HTTP requests, interacts with services, renders templates (Jinja2), and manages user sessions/authentication via cookies. Uses FastAPI routers and dependencies (`Depends`).
