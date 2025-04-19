@@ -34,7 +34,7 @@ Here's a glimpse of the DoToo application interface:
 ![Todo List Page](ui_previews/todo_overview.png)
 
 **Add Todo Form:**
-![Add Todo Form](ui_previews/todo_form.pngg)
+![Add Todo Form](ui_previews/todo_form.png)
 
 **Edit Todo Page:**
 ![Edit Todo Page](ui_previews/edit_todo.png)
